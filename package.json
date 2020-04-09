@@ -1,0 +1,23 @@
+{
+  "name": "expressTest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vrokn/expressTest.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Vrokn/expressTest/issues"
+  },
+  "homepage": "https://github.com/Vrokn/expressTest#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
