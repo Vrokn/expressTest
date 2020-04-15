@@ -1,5 +1,17 @@
 const express = require('express');
 const app = express();
+app.get('/', (req, res) => {
+  var ua = req.headers['user-agent'];
+  res.send(ua);
+});
+
+app.listen(3000, () => console.log('Listening on port 3000!'));
+
+/* COMENTARIOS DE EJERCICIOS ANTERIORES
+SALUDAME 3:
+
+const express = require('express');
+const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 
@@ -18,9 +30,6 @@ app.post('/', (req, res) => {
 });
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
-
-/* COMENTARIOS DE EJERCICIOS ANTERIORES
-
 
 SALUDAME!!!
 const express = require('express');
