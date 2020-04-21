@@ -1,6 +1,53 @@
 const express = require('express');
 var mongoose = require("mongoose");
 const app = express();
+mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/mongo-1', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connection.on("error", function(e) { console.error(e); });
+
+const schema = mongoose.Schema({
+  count: { type: Number, default: 1 },
+  name: String,
+});
+
+const Visitor = mongoose.model("Visitors", schema); // definimos el modelo
+
+app.get('/', (req, res) => {
+  let name = req.query.name;
+
+    Visitor.findOne({ name: name }, async function(err, article) {
+      if (err) return console.error(err);
+      if (!article){
+        const visitor = new Visitor({ name: name || "Anónimo" });
+        await visitor.save();
+      } else {
+      article.count++;
+      await article.save();
+      }
+      Visitor.find({}, (error, data) => {
+          let tr = '';
+          data.forEach((article) => {
+            tr += ('<tr><td>'+article['_id']+'</td>'+
+                       '<td>'+article.name+'</td>' +
+                       '<td>'+article.count+'</td></tr>' );
+          });
+          let header = ('<table><thead><tr>'+
+                          '<th class="text-center">'+"Id"+'</th>'+
+                          '<th class="text-center">'+"Name"+'</th>'+
+                          '<th class="text-center">'+"Visits"+'</th>'+
+                     '</tr></thead>'+tr+'</table>');
+          return  res.send(header);
+        });
+    });
+});
+
+app.listen(3000, () => console.log('Listening on port 3000!'));
+
+/* COMENTARIOS DE EJERCICIOS ANTERIORES
+--- SOLUCION PROPIA BASE DE DATOS:
+
+const express = require('express');
+var mongoose = require("mongoose");
+const app = express();
 mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/mongo-1', { useNewUrlParser: true });
 mongoose.connection.on("error", function(e) { console.error(e); });
 
@@ -35,10 +82,31 @@ app.get('/', (req, res) => {
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
-/* COMENTARIOS DE EJERCICIOS ANTERIORES
+---SOLUCION  MAKE IT  A BASE DE DATOS:
 
+const express = require("express");
+const mongoose = require("mongoose");
 
-NAVEGADOR:
+const app = express();
+
+mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/mongo-1', { useNewUrlParser: true });
+
+const VisitorSchema = new mongoose.Schema({
+  name: { type: String },
+  date: { type: Date, default: Date.now }
+});
+const Visitor = mongoose.model("Visitor", VisitorSchema);
+
+app.get("/", async (req, res) => {
+  const visitor = new Visitor({ name: req.params.name || "Anónimo" });
+  await visitor.save()
+
+  res.send("<h1>El visitante fue almacenado con éxito.</h1>")
+});
+
+app.listen(3000, () => console.log("Listening on port 3000 ..."));
+
+---NAVEGADOR:
 
 const express = require('express');
 const app = express();
@@ -49,7 +117,7 @@ app.get('/', (req, res) => {
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
-SALUDAME 3:
+---SALUDAME 3:
 
 const express = require('express');
 const app = express();
@@ -72,7 +140,7 @@ app.post('/', (req, res) => {
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
-SALUDAME!!!
+---SALUDAME!!!
 const express = require('express');
 const app = express();
 app.get('/makers/:nombre', (req, res) => {
@@ -82,7 +150,7 @@ app.get('/makers/:nombre', (req, res) => {
 });
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
-par impar:
+---par impar:
 
 const express = require('express');
 const app = express();
