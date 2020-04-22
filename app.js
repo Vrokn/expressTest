@@ -4,6 +4,48 @@ const app = express();
 mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/mongo-1', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connection.on("error", function(e) { console.error(e); });
 
+const EntriesSchema = new mongoose.Schema({
+  name: { type: String },
+  email: { type: String },
+  password: { type: String }
+});
+const Entries = mongoose.model("Entries", EntriesSchema);
+
+app.use(express.urlencoded());
+app.set('view engine', 'pug');
+app.set('views', './views');
+
+app.get("/", async (req, res) => { //GET / - muestra la lista de usuarios registrados.
+  const entries = await Entries.find();
+  res.render("table", { entries: entries })
+});
+
+app.get("/register", (req, res) => { //GET /register - muestra el formulario para registrarse.
+    res.render('form');
+});
+
+app.post("/register", async (req, res) => { //POST /register - crea al usuario en MongoDB.
+  const name = req.body.name;
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log(req.body);
+  const entrie = new Entries({ name:name, email:email, password:password });
+  await entrie.save();
+  res.redirect('/')
+});
+
+app.listen(3000, () => console.log("Listening on port 3000 ..."));
+
+/* COMENTARIOS DE EJERCICIOS ANTERIORES
+-----VISITANTES RECURRENTES:
+
+
+const express = require('express');
+var mongoose = require("mongoose");
+const app = express();
+mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost:27017/mongo-1', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connection.on("error", function(e) { console.error(e); });
+
 const schema = mongoose.Schema({
   count: { type: Number, default: 1 },
   name: String,
@@ -42,8 +84,8 @@ app.get('/', (req, res) => {
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
-/* COMENTARIOS DE EJERCICIOS ANTERIORES
---- SOLUCION PROPIA BASE DE DATOS:
+
+----- SOLUCION PROPIA BASE DE DATOS:
 
 const express = require('express');
 var mongoose = require("mongoose");
@@ -82,7 +124,7 @@ app.get('/', (req, res) => {
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
----SOLUCION  MAKE IT  A BASE DE DATOS:
+----- SOLUCION  MAKE IT  A BASE DE DATOS:
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -106,7 +148,7 @@ app.get("/", async (req, res) => {
 
 app.listen(3000, () => console.log("Listening on port 3000 ..."));
 
----NAVEGADOR:
+----- NAVEGADOR:
 
 const express = require('express');
 const app = express();
@@ -117,7 +159,7 @@ app.get('/', (req, res) => {
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
----SALUDAME 3:
+----- SALUDAME 3:
 
 const express = require('express');
 const app = express();
@@ -140,7 +182,7 @@ app.post('/', (req, res) => {
 
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
----SALUDAME!!!
+----- SALUDAME!!!
 const express = require('express');
 const app = express();
 app.get('/makers/:nombre', (req, res) => {
@@ -150,7 +192,7 @@ app.get('/makers/:nombre', (req, res) => {
 });
 app.listen(3000, () => console.log('Listening on port 3000!'));
 
----par impar:
+----- par impar:
 
 const express = require('express');
 const app = express();
